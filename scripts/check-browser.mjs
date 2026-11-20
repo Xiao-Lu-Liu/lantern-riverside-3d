@@ -31,9 +31,13 @@ try {
   await page.keyboard.press('l');
   await page.waitForTimeout(150);
   report.explicitPointerLockGranted = await page.evaluate(() => document.pointerLockElement !== null);
+  const releaseStarted = Date.now();
   await page.keyboard.press('1');
   await page.waitForFunction(() => document.pointerLockElement === null);
-  if (report.explicitPointerLockGranted) assert.equal(await page.locator('#toast').textContent(), '鼠标光标已恢复');
+  if (report.explicitPointerLockGranted) {
+    await page.waitForFunction(() => document.getElementById('toast').textContent === '鼠标光标已恢复', null, { timeout: 2000 });
+  }
+  report.pointerReleaseMs = Date.now() - releaseStarted;
   await page.mouse.move(710, 350); await page.mouse.down();
   await page.mouse.move(870, 375, { steps: 10 }); await page.mouse.up();
   await page.screenshot({ path: path.join(output, '全景-拖动后.png') });
