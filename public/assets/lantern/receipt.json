@@ -1,0 +1,82 @@
+{
+  "id": "02-G6-0018",
+  "name": "灯笼",
+  "mode": "solar-accepted",
+  "revision": "3c963f41e21e400ab50e74359f2fd6c6eae4a4b590bced6ce5e61adacfe1f0d0",
+  "version": "compact-v2+orientation-v1",
+  "sourceSha256": "98d80c6f94202410e3f6126f2cea14eb3a1f280e88c6e822c1b2bcc7f8dbeba1",
+  "sourceModule": null,
+  "sourceBytes": 9885383,
+  "bytes": 904689,
+  "entryBytes": 7935,
+  "defaultState": "hanging",
+  "states": [
+    "hanging"
+  ],
+  "stateBytes": {
+    "hanging": 895682
+  },
+  "verticesBefore": 308124,
+  "verticesAfter": 54774,
+  "indexedGeometries": 18,
+  "geometryBytesBefore": 7394976,
+  "geometryBytesAfter": 2547072,
+  "textureBytesBefore": 0,
+  "textureBytesAfter": 0,
+  "exactTextures": 0,
+  "textureEncodings": [],
+  "qualification": "accepted",
+  "geometryReconstructionExact": true,
+  "allStatesPreserved": true,
+  "allMaterialsPreserved": true,
+  "files": {
+    "README.md": {
+      "bytes": 3469,
+      "sha256": "021ecad88e6d240251327df40aa339c842784090b448dfeb534c75efe1c17a31"
+    },
+    "THREE-LICENSE.txt": {
+      "bytes": 1081,
+      "sha256": "4c40a1ef62450b857c3b2aaf294936304cd552d965fbcd9d32d4c5bcf4ba4454"
+    },
+    "asset.mjs": {
+      "bytes": 7935,
+      "sha256": "09da82be1810c28ea59b506dbd2c0b56d287e8cb0a873d0f1c67ef6f3e499678"
+    },
+    "data.json.gz": {
+      "bytes": 3715,
+      "sha256": "fc41091cd2888174d3e769bc7bea2f64266cc76d826d9b0980918b9648e61993"
+    },
+    "loader.mjs": {
+      "bytes": 3198,
+      "sha256": "c4394edfa2f78b47f55304d7126f1e16fd13667107fa2475cfd08c1b300fc42d"
+    },
+    "pack-1.bin.gz": {
+      "bytes": 880915,
+      "sha256": "d431d3642bf0c35d093d5d2991adaef990e6a0d627e802284673af574ac86ac9"
+    },
+    "orientation.json": {
+      "bytes": 971,
+      "sha256": "18bf21308bb23efd53106035a4aa68e26b32a3accbda7f9cdbd24ac27470c4ac"
+    },
+    "orientation.mjs": {
+      "bytes": 865,
+      "sha256": "bd6121f29c963daf2117b5c0ab886719ca000b1012835ac33f9011183c463dd0"
+    }
+  },
+  "relativeDirectory": "02-G6-0018/compact-v2-98d80c6f9420",
+  "elapsedSeconds": 0.28,
+  "payloadBytes": 898378,
+  "orientationRevision": "2026-10-13",
+  "orientationStatus": "unknown",
+  "predecessor": {
+    "batch": "2026-10-12",
+    "zipSha256": "8528b0313514da213b2d836b3d764370b823909d0a6f238e47bb6b4a839a9bd7",
+    "receiptSha256": "6a293ee397db732c1dfb2e23faccadd418ef259600ea8bf3d584828287faf212"
+  },
+  "publicDistributionCleanup": {
+    "version": "public-package-privacy-20261026-v1",
+    "internalPathsOmitted": true,
+    "rightsNoticesPreserved": true,
+    "originalBuildMetricsRetained": true
+  }
+}

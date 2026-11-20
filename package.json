@@ -1,0 +1,30 @@
+{
+  "name": "lantern-riverside-3d",
+  "private": true,
+  "version": "0.1.0",
+  "description": "An interactive lantern festival riverscape built with Three.js · 灯会河畔 3D 漫游",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Xiao-Lu-Liu/lantern-riverside-3d.git"
+  },
+  "homepage": "https://xiao-lu-liu.github.io/lantern-riverside-3d/",
+  "engines": { "node": ">=22.12.0" },
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "node --test tests/*.test.mjs",
+    "check:browser": "node scripts/check-browser.mjs",
+    "export:video": "node scripts/export-video.mjs"
+  },
+  "dependencies": {
+    "lucide": "^1.75.0",
+    "three": "^0.180.0"
+  },
+  "devDependencies": {
+    "playwright": "^1.65.1",
+    "vite": "^7.2.2"
+  }
+}

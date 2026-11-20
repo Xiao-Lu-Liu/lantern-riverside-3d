@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101a30">
+  <meta name="description" content="灯会河畔 3D 场景探索：沿着石拱桥与乌篷船看灯影入水，自由漫游或跟随导览，感受江南夜色。">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <title>灯会河畔 · 沉浸漫游</title>
+  <style>
+    :root{--ink:#f4ead7;--muted:#c3c8d2;--glass:rgba(12,22,38,.72);--line:rgba(237,218,179,.2);--gold:#eac98b;--red:#a94035;--ease:cubic-bezier(.2,.8,.2,1)}
+    *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#101a30;color:var(--ink);font-family:"Noto Serif SC","Source Han Serif SC","Songti SC",serif}button{font:inherit}button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}button{cursor:pointer}button:disabled{cursor:wait;opacity:.5}
+    #scene-container,#poster{position:fixed;inset:0}#poster{background:#172443 url('/poster.png') center/cover no-repeat;transition:opacity .6s var(--ease);z-index:0}#poster.ready{opacity:0;pointer-events:none}#scene-container{z-index:1}canvas{display:block;width:100%;height:100%;touch-action:none;outline:none;cursor:grab}canvas.dragging{cursor:grabbing}
+    .ui{position:fixed;z-index:3;pointer-events:none}.ui button,.ui a,.ui input,.interactive{pointer-events:auto}
+    .topbar{top:0;left:0;right:0;display:grid;grid-template-columns:1fr auto 1fr;align-items:start;padding:calc(20px + env(safe-area-inset-top)) 24px 0;gap:16px;background:linear-gradient(to bottom,rgba(7,14,29,.5),transparent)}
+    .brand{display:flex;align-items:center;gap:12px;text-shadow:0 2px 14px #07101f}.seal{width:36px;height:36px;border:1px solid rgba(234,201,139,.65);display:grid;place-items:center;color:var(--gold);font-size:20px;line-height:1;transform:rotate(-2deg)}.brand-name{font-size:19px;letter-spacing:.16em}.brand-sub{font:9px/1.4 ui-sans-serif,system-ui,sans-serif;letter-spacing:.24em;color:#d0d5df;margin-top:4px}
+    .mode-switch{display:flex;padding:4px;background:var(--glass);border:1px solid var(--line);border-radius:4px;backdrop-filter:blur(16px);box-shadow:0 8px 32px rgba(0,0,0,.18)}.mode-switch button{border:0;background:transparent;color:var(--muted);min-height:42px;padding:0 16px;display:flex;gap:7px;align-items:center;justify-content:center;font-size:13px;letter-spacing:.08em;white-space:nowrap;border-radius:2px;transition:background .18s,color .18s}.mode-switch button:hover{color:var(--ink);background:rgba(255,255,255,.06)}.mode-switch button.active{color:#241a12;background:var(--gold)}svg.lucide{width:16px;height:16px;stroke-width:1.6}
+    .actions{justify-self:end;display:flex;gap:8px}.icon-btn{width:44px;height:44px;display:grid;place-items:center;color:var(--ink);background:var(--glass);border:1px solid var(--line);border-radius:50%;backdrop-filter:blur(14px);transition:background .18s,transform .18s}.icon-btn:hover{background:rgba(50,58,72,.85);transform:translateY(-1px)}
+    .game-btn{min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:4px;background:var(--glass);color:var(--gold);font:13px ui-sans-serif,system-ui,sans-serif;white-space:nowrap;backdrop-filter:blur(14px)}.game-btn:hover{background:rgba(50,58,72,.85)}.store-links{display:grid;gap:10px;margin-top:18px}.store-links a{display:block;padding:12px 14px;border:1px solid var(--line);border-radius:3px;color:var(--ink);text-decoration:none;font:14px ui-sans-serif,system-ui,sans-serif}.store-links a:hover{border-color:var(--gold);background:rgba(234,201,139,.08)}.source-link{color:var(--gold);text-underline-offset:4px}
+    .views{left:24px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:flex-start;gap:4px}.view-btn{border:0;border-left:1px solid rgba(234,201,139,.25);background:transparent;color:#d4d8e0;min-height:44px;padding:0 12px;display:flex;align-items:center;gap:10px;text-shadow:0 2px 8px #08111e;transition:color .18s,border-color .18s}.view-btn span{font:10px ui-sans-serif,system-ui,sans-serif;color:var(--gold);opacity:.75}.view-btn:hover,.view-btn.active{color:#fff2d7;border-left-color:var(--gold)}
+    .intro{left:24px;bottom:calc(26px + env(safe-area-inset-bottom));width:min(340px,calc(100vw - 48px));padding:22px 24px;background:linear-gradient(135deg,rgba(12,22,38,.88),rgba(19,27,43,.65));border:1px solid var(--line);backdrop-filter:blur(18px);box-shadow:0 16px 48px rgba(0,0,0,.22);transition:opacity .25s,transform .25s}.intro.hidden{opacity:0;transform:translateY(12px);pointer-events:none;visibility:hidden}.intro.hidden *{pointer-events:none}.intro-kicker{font:10px/1.5 ui-sans-serif,system-ui,sans-serif;letter-spacing:.18em;color:var(--gold)}.intro h1{font-weight:500;font-size:28px;letter-spacing:.08em;margin:9px 0 10px}.intro p{font-family:"Noto Sans SC","Source Han Sans SC",sans-serif;font-size:14px;line-height:1.75;color:#d6dae1;margin:0 0 18px}.intro-actions{display:flex;gap:10px}.primary,.secondary{min-height:44px;padding:0 16px;border-radius:2px;font-size:14px;transition:filter .18s,background .18s}.primary{border:1px solid var(--gold);background:var(--gold);color:#251b13}.primary:hover{filter:brightness(1.08)}.secondary{border:1px solid var(--line);background:transparent;color:var(--ink)}.secondary:hover{background:rgba(255,255,255,.06)}
+    .bottom{bottom:calc(18px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;transition:opacity .2s}.place{font-size:16px;letter-spacing:.18em;text-shadow:0 2px 12px #000}.hint{font:12px/1.5 ui-sans-serif,system-ui,sans-serif;color:#e0e3e9;text-shadow:0 2px 8px #000;background:rgba(8,17,30,.48);padding:6px 12px;border-radius:20px;backdrop-filter:blur(8px);white-space:nowrap}.intro:not(.hidden)~.bottom{opacity:0}
+    .tour-progress{height:2px;width:180px;background:rgba(255,255,255,.2);overflow:hidden;display:none}.tour-progress i{display:block;width:100%;height:100%;background:var(--gold);transform-origin:left;transform:scaleX(0)}body.tour-on .tour-progress{display:block}
+    #crosshair{position:fixed;left:50%;top:50%;width:5px;height:5px;border:1px solid rgba(255,239,205,.8);border-radius:50%;z-index:2;pointer-events:none;display:none;box-shadow:0 0 8px rgba(255,215,150,.5)}body.walk-on #crosshair{display:block}
+    #loading{position:fixed;z-index:5;left:50%;bottom:28px;transform:translateX(-50%);width:230px;padding:14px 18px;background:rgba(11,20,35,.84);border:1px solid var(--line);backdrop-filter:blur(14px);transition:opacity .3s}#loading.done{opacity:0;pointer-events:none}.loading-title{font-size:13px;letter-spacing:.12em;text-align:center}.loading-bar{height:2px;background:rgba(255,255,255,.14);margin-top:10px;overflow:hidden}.loading-bar i{display:block;height:100%;width:12%;background:var(--gold);transition:width .3s}
+    .panel{position:fixed;z-index:7;right:20px;top:84px;width:min(360px,calc(100vw - 40px));max-height:calc(100dvh - 110px);overflow:auto;background:rgba(12,21,36,.94);border:1px solid var(--line);backdrop-filter:blur(20px);padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.3)}.panel[hidden]{display:none}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:16px}.panel h2{font-weight:500;font-size:20px;letter-spacing:.08em;margin:0}.panel p,.panel li{font-family:"Noto Sans SC","Source Han Sans SC",sans-serif;color:#d7dbe2;font-size:14px;line-height:1.75}.panel img{display:block;width:100%;margin-top:16px;border:1px solid var(--line)}.panel dl{display:grid;grid-template-columns:80px 1fr;gap:8px 12px;font-family:"Noto Sans SC","Source Han Sans SC",sans-serif;font-size:14px}.panel dt{color:var(--gold)}.panel dd{margin:0;color:#e0e3e8}.panel .close{width:36px;height:36px;flex:none}
+    #toast{position:fixed;z-index:9;left:50%;top:90px;transform:translate(-50%,-8px);padding:10px 16px;background:rgba(17,27,43,.94);border:1px solid var(--line);font-family:"Noto Sans SC",sans-serif;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}#toast.show{opacity:1;transform:translate(-50%,0)}
+    #perf{position:fixed;z-index:2;right:20px;bottom:16px;color:rgba(233,236,241,.7);font:10px ui-monospace,monospace;pointer-events:none}.seeking .dynamic{display:none!important}
+    #joystick{position:fixed;z-index:4;left:24px;bottom:calc(28px + env(safe-area-inset-bottom));width:112px;height:112px;border:1px solid rgba(255,255,255,.22);border-radius:50%;background:rgba(10,20,34,.25);display:none;touch-action:none;pointer-events:auto}#stick{position:absolute;left:35px;top:35px;width:42px;height:42px;border-radius:50%;background:rgba(234,201,139,.52);border:1px solid rgba(255,240,210,.7)}.mobile-look{display:none;position:fixed;z-index:2;right:20px;bottom:36px;font:12px ui-sans-serif,system-ui,sans-serif;color:#fff;text-shadow:0 2px 6px #000;pointer-events:none}
+    @media(max-width:800px){.topbar{grid-template-columns:1fr auto;padding-left:16px;padding-right:16px}.brand-sub{display:none}.brand-name{font-size:16px}.seal{width:30px;height:30px;font-size:17px}.mode-switch{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom));z-index:4}.mode-switch button{padding:0 12px;font-size:12px}.actions{gap:6px}.icon-btn{width:40px;height:40px}.views{left:12px;top:110px;transform:none}.view-btn{font-size:12px;padding:0 8px}.intro{left:16px;bottom:calc(82px + env(safe-area-inset-bottom));width:calc(100vw - 32px);padding:18px 20px}.intro h1{font-size:24px}.intro p{font-size:13px}.bottom{bottom:calc(76px + env(safe-area-inset-bottom))}.hint{display:none}.place{font-size:13px}#perf{display:none}.actions .optional{display:none}body.walk-on #joystick{display:block;bottom:calc(88px + env(safe-area-inset-bottom))}body.walk-on .mobile-look{display:block;bottom:calc(100px + env(safe-area-inset-bottom))}body.walk-on .views,body.tour-on .views{opacity:.55}.panel{right:12px;top:74px;width:calc(100vw - 24px)}#toast{top:76px;white-space:nowrap}.tour-progress{width:120px}}
+    @media(max-height:500px){.intro{display:none}.views{top:92px}.bottom{bottom:70px}}
+    @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  </style>
+</head>
+<body>
+  <div id="poster" aria-hidden="true"></div>
+  <main id="scene-container" aria-label="可交互的灯会河畔三维场景"></main>
+  <div class="ui topbar">
+    <div class="brand"><div class="seal">灯</div><div><div class="brand-name">灯会河畔</div><div class="brand-sub">LANTERN RIVERSCAPE</div></div></div>
+    <nav class="mode-switch" aria-label="游览模式">
+      <button data-mode="overview" class="active"><i data-lucide="orbit"></i>全景</button>
+      <button data-mode="walk"><i data-lucide="footprints"></i>漫游</button>
+      <button data-mode="tour"><i data-lucide="route"></i>导览</button>
+    </nav>
+    <div class="actions">
+      <button id="game-btn" class="game-btn" aria-label="游戏下载">游戏下载</button>
+      <button id="reference-btn" class="icon-btn optional" title="原画对照" aria-label="原画对照"><i data-lucide="image"></i></button>
+      <button id="capture-btn" class="icon-btn optional" title="保存留影" aria-label="保存留影"><i data-lucide="camera"></i></button>
+      <button id="fullscreen-btn" class="icon-btn" title="全屏" aria-label="切换全屏"><i data-lucide="maximize-2"></i></button>
+      <button id="help-btn" class="icon-btn" title="操作指南" aria-label="操作指南"><i data-lucide="info"></i></button>
+    </div>
+  </div>
+  <nav class="ui views" aria-label="观景点">
+    <button class="view-btn active" data-view="river"><span>01</span>河畔全景</button>
+    <button class="view-btn" data-view="bridge"><span>02</span>石拱桥头</button>
+    <button class="view-btn" data-view="stage"><span>03</span>临河戏台</button>
+    <button class="view-btn" data-view="boat"><span>04</span>乌篷船头</button>
+  </nav>
+  <section class="ui intro" id="intro">
+    <div class="intro-kicker">VIDEO TO 3D · 江南夜游</div>
+    <h1>一席灯影，十里江南</h1>
+    <p>从视频画面走入立体河畔。越过石拱桥，停靠乌篷船，在锦鲤鱼灯与荷花河灯之间，慢慢看一场灯会。</p>
+    <div class="intro-actions"><button id="start-tour" class="primary">沿灯寻景</button><button id="start-walk" class="secondary">自由走走</button></div>
+  </section>
+  <div class="ui bottom">
+    <div class="place dynamic" id="place-label">河畔全景 · 蓝调时刻</div>
+    <div class="tour-progress dynamic"><i id="tour-bar"></i></div>
+    <div class="hint" id="control-hint">拖拽环视 · 滚轮靠近 · 点击左侧切换观景点</div>
+  </div>
+  <div id="crosshair"></div>
+  <div id="joystick" aria-label="移动摇杆"><div id="stick"></div></div>
+  <div class="mobile-look">右侧拖动环视</div>
+  <div id="loading"><div class="loading-title" id="loading-title">正在点亮河畔灯火</div><div class="loading-bar"><i id="loading-bar"></i></div></div>
+  <section id="help-panel" class="panel" role="dialog" aria-modal="true" aria-labelledby="help-title" hidden>
+    <div class="panel-head"><h2 id="help-title">游览指南</h2><button class="icon-btn close" data-close="help-panel" aria-label="关闭指南"><i data-lucide="x"></i></button></div>
+    <dl><dt>全景</dt><dd>拖拽旋转，滚轮或双指缩放。</dd><dt>漫游</dt><dd>WASD 移动，按住左键拖动画面环视，单击不会隐藏光标；按 L 可主动锁定鼠标，Esc 恢复。</dd><dt>导览</dt><dd>自动串联河畔、船头、石桥与戏台，再次点击导览可暂停。</dd><dt>快捷键</dt><dd>1—4 切换观景点，F 全屏，H 打开本指南。</dd></dl>
+    <p>手机端使用左下摇杆移动，拖动画面右侧环视。场景为基于单段视频的艺术化空间重建，非摄影测量模型。</p>
+  </section>
+  <section id="reference-panel" class="panel" role="dialog" aria-modal="true" aria-labelledby="reference-title" hidden>
+    <div class="panel-head"><h2 id="reference-title">原画对照</h2><button class="icon-btn close" data-close="reference-panel" aria-label="关闭原画"><i data-lucide="x"></i></button></div>
+    <img src="/poster.png" alt="用户视频中的灯会河畔关键画面">
+    <p>保留了视频中的石拱桥、临河戏台、乌篷船、鱼灯与荷花河灯，并补全画面之外的可游览空间。</p>
+  </section>
+  <section id="game-panel" class="panel" role="dialog" aria-modal="true" aria-labelledby="game-title" hidden>
+    <div class="panel-head"><h2 id="game-title">暖谷谜趣</h2><button class="icon-btn close" data-close="game-panel" aria-label="关闭游戏下载"><i data-lucide="x"></i></button></div>
+    <p>Nookvale Puzzles<br>体验 HIKOO 的温馨找物解谜游戏，寻找线索，慢慢解开谜题。</p>
+    <div class="store-links">
+      <a href="https://apps.apple.com/us/app/nookvale-puzzles/id6825582989" target="_blank" rel="noopener noreferrer">App Store · iPhone / iPad ↗</a>
+      <a href="https://play.google.com/store/apps/details?id=com.hikoo.zhaodongdong" target="_blank" rel="noopener noreferrer">Google Play · Android ↗</a>
+    </div>
+    <p>眼前的灯会是一项独立的 3D 场景探索。<br><a class="source-link" href="https://github.com/Xiao-Lu-Liu/lantern-riverside-3d" target="_blank" rel="noopener noreferrer">查看开源项目 ↗</a></p>
+  </section>
+  <div id="toast" role="status"></div>
+  <div id="perf" class="dynamic"></div>
+  <script type="module" src="./src/scene.js"></script>
+</body>
+</html>
